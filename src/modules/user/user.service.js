@@ -24,7 +24,7 @@ export const userSignupService = async (request, response) => {
       data: createdUser.toUserProfile(),
     });
   } catch (error) {
-    return response.status(500).json({
+    return response.status(error.message.includes("Email") ? 422 : 500).json({
       status: "error",
       message: error.message || "Internal Server Error!!",
       ...(error.length > 0 && { error }),
@@ -46,7 +46,7 @@ export const userLoginService = async (request, response) => {
       });
     }
 
-    const userToken = generateUserAuthToken({ userId: foundUser.id }, "1h");
+    const userToken = generateUserAuthToken({ userId: foundUser.id });
 
     return response.status(200).json({
       status: "success",
@@ -89,7 +89,7 @@ export const updateSingleUserService = async (request, response) => {
       data: updatedUser.toUserProfile(),
     });
   } catch (error) {
-    return response.status(500).json({
+    return response.status(error.message.includes("Email") ? 422 : 500).json({
       status: "error",
       message: error.message || "Internal Server Error!!",
       ...(error.length > 0 && { error }),

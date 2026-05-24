@@ -14,7 +14,7 @@ export const createSingleNoteByUserService = async (request, response) => {
       data: createdNote.toBaseNote(),
     });
   } catch (error) {
-    return response.status(500).json({
+    return response.status(error.message.includes("validation") ? 422 : 500).json({
       status: "error",
       message: error.message || "Internal Server Error!!",
       ...(error.length > 0 && { error }),
@@ -58,7 +58,7 @@ export const updateSingleNoteByIDService = async (request, response) => {
       data: updatedNote.toBaseNote(),
     });
   } catch (error) {
-    return response.status(500).json({
+    return response.status(error.message.includes("validation") ? 422 : 500).json({
       status: "error",
       message: error.message || "Internal Server Error!!",
       ...(error.length > 0 && { error }),
@@ -100,7 +100,7 @@ export const replaceSingleNoteByIDService = async (request, response) => {
       data: replacedNote.toBaseNote(),
     });
   } catch (error) {
-    return response.status(500).json({
+    return response.status(error.message.includes("validation") ? 422 : 500).json({
       status: "error",
       message: error.message || "Internal Server Error!!",
       ...(error.length > 0 && { error }),
@@ -365,6 +365,13 @@ export const getAllNotesByUserWithAggregateService = async (request, response) =
         },
       },
     ]);
+
+    if (notesList.length === 0) {
+      return response.status(404).json({
+        status: "error",
+        message: "No Notes Found To Get!!",
+      });
+    }
 
     return response.status(200).json({
       status: "success",

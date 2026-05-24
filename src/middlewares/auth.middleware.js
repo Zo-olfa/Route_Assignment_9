@@ -10,7 +10,7 @@ export const authorizationMiddleware = async (request, response, next) => {
 
     const user = await verifyUserAuthToken(token, next);
     if (!user) {
-      throw new Error("User Not Found!!");
+      return response.status(404).json({ status: "error", message: "User Not Found!!" });
     }
 
     request.user = user;
